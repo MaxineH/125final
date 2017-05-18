@@ -37,15 +37,15 @@ public class BankersAlgorithm {
 		Collections.sort(jobQ, Process.arrivalTimeComparator);
 	}
 
-	public ArrayList<Process> getProcess(int t) {
+	public ArrayList<Process> getProcess(int t, int max) {
 		System.out.println("@ banker's algo");
 
 		if (algoType.contains("TDTD")){
-			startTDTD(t, false);
+			startTDTD(t, max);
 		}
 
 		else if (algoType.contains("TDDT")){
-			startTDDT(t);
+			startTDDT(t, max);
 		}
 
 		for (int i=0; i<availableProc.size(); i++){
@@ -55,73 +55,64 @@ public class BankersAlgorithm {
 		return availableProc;
 	}
 
-	public void startTDTD(int t, boolean recur){
+	public void startTDTD(int t, int max){
 	
 		ArrayList<Integer> need;
-		int temp= (recur || algoType.contains("reset"))? 0:curr;
+		int temp= (algoType.equalsIgnoreCase("reset"))? 0:curr;
+		int count=0;
 		
-		for (int count=0; temp<jobQ.size() && t>=jobQ.get(temp).getArrivalTime(); count=0, temp++){
+		for (int k=1; temp<jobQ.size() && t>=jobQ.get(temp).getArrivalTime() && count<=max; 
+				k=1, temp++, count++){
 			
-			for (int k=1; k<resSize && 	(!jobQ.get(temp).isAllocated(choice)); k++){
+			for (; k<resSize && (!jobQ.get(temp).isAllocated(choice)); k++){
 				need = jobQ.get(temp).getNeed();
-				
-				if (need.get(k) <= available.get(k)){
-					count++;
-				}
-				else
+				if (need.get(k) > available.get(k))
 					break;
 			}
-			
-			if (count==resSize-1 && !jobQ.get(temp).isAllocated(choice)){
-				
+		
+			if (k==resSize && !jobQ.get(temp).isAllocated(choice)){
 				jobQ.get(temp).setIsAllocated(choice, true);
 				allocateRes(jobQ.get(temp));
-		
 				availableProc.add(jobQ.get(temp));
 				curr=temp;
-				
-				temp = algoType.contains("reset")? -1:temp;
+				temp = algoType.equalsIgnoreCase("reset")? -1:temp;
 			}
-		
-			if (temp == jobQ.size()-1 && algoType.contains("continuous") && recur==false){
-				startTDTD(t, true);
-			}
+			if (temp==jobQ.size()-1) temp = -1;
 		}
 	}
 	
-	public void startTDDT(int t) {
+	public void startTDDT(int t, int max) {
 		int temp = curr;
-		boolean down=true, flag=false;
+		boolean down=true;
 		ArrayList<Integer> need;
+		int counter=0;
 		
 		try{
-		for (int count=0; temp<jobQ.size() && t>=jobQ.get(temp).getArrivalTime(); count=0, temp++){
+		for ( int k=1; temp<jobQ.size() && t>=jobQ.get(temp).getArrivalTime() && counter<=max; k=1, counter++){
 			
-			for (int k=1; k<resSize && !jobQ.get(temp).isAllocated(choice); k++){
+			for ( ; k<resSize && !jobQ.get(temp).isAllocated(choice); k++){
 				need = jobQ.get(temp).getNeed();
-				if (need.get(k) <= available.get(k)) {
-					count++;
-				}
-				else
+				
+				System.out.println("NOW: "+need.get(k) + " avail: " +available.get(k) );
+				if (need.get(k) > available.get(k)) {
 					break;
+				}
 			}
 		
-			if (count==resSize-1 && !jobQ.get(temp).isAllocated(choice)){
+			if (k==resSize && !jobQ.get(temp).isAllocated(choice)){
 				jobQ.get(temp).setIsAllocated(choice, true);
 				allocateRes(jobQ.get(temp));
 				availableProc.add(jobQ.get(temp));
 				curr=temp;
 			}
 		
-			if (temp == jobQ.size()-1 && !flag){ //if last element na
+			if (temp == jobQ.size()-1){ //if last element na
 				down=false;
-				flag = true;
 			}
-			else if (temp==0 && down==false && !flag){
+			else if (temp==0 && down==false){
 				down=true;
-				flag=true;
 			}
-			temp = (down)? temp:temp-2; 
+			temp = (down)? ++temp:--temp; 
 		}
 		
 		}catch(ArrayIndexOutOfBoundsException e){	}

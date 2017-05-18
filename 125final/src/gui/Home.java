@@ -89,7 +89,7 @@ public class Home extends JFrame {
 		tab=new CustomTab();
 		tab.add(userPanel,"User-Defined");
 		tab.add(randPanel,"Randomize");
-		
+		 
 		listPanel=new ListPanel();
 		panel.add(tab);
 		panel.add(listPanel);
