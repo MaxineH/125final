@@ -30,11 +30,13 @@ public class Simulation extends Thread {
 		banker=new BankersAlgorithm[simCount];
 		disk=new DiskAlgo[simCount];
 		chart=new Chart[simCount];
-
+		
 		resourceNum=input.getResourceNum();
 		available=input.getAvailable();
-		process=input.getProcess();
+		process=input.getProcess();		
+		
 		simPanel.setLegend(process.size());
+		
 		for (int i=0; i<simCount; i++) {
 			chart[i]=new Chart(i+1,input.getHeadCylinder(),input.getMaxCylinder());
 			banker[i]=input.getBankers(i,chart[i]);
@@ -42,6 +44,7 @@ public class Simulation extends Thread {
 			disk[i]=input.getDiskAlgo(i,chart[i]);
 			simPanel.addChart(chart[i]);
 		}
+		
 		init();
 	}
 	
@@ -49,11 +52,20 @@ public class Simulation extends Thread {
 		SafeState deadlock=new SafeState(available);
 		
 		while (deadlock.hasDeadlock(process, resourceNum)) {
+			System.out.println("Deadlock detected. Adjusting...");
 			deadlock.pushSafeState(available);
 			available=deadlock.getAvailable();
 		}
+		
+		for (int k=0; k < simCount ; k++){
+			banker[k].setAvailable(available);		
+			for (int i=1; i<resourceNum; i++){
+				chart[k].showAvailable(i, Integer.toString(available.get(i)));
+			}
+		}
+	
 		maxIteration = deadlock.getMaxIteration();
-		start();
+			start();
 	}
 	
 	public void pause() {

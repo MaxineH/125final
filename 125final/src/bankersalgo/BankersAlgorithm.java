@@ -31,15 +31,12 @@ public class BankersAlgorithm {
 		this.resSize = resSize;
 		availableProc=new ArrayList<Process>();
 		
-		System.out.println("Init algo type: "+algoType);
-		
 		chart.initAvailable(available);
 		Collections.sort(jobQ, Process.arrivalTimeComparator);
 	}
 
 	public ArrayList<Process> getProcess(int t, int max) {
-		System.out.println("@ banker's algo");
-
+	
 		if (algoType.contains("TDTD")){
 			startTDTD(t, max);
 		}
@@ -48,10 +45,6 @@ public class BankersAlgorithm {
 			startTDDT(t, max);
 		}
 
-		for (int i=0; i<availableProc.size(); i++){
-			System.out.println("Return proc id: "+availableProc.get(i).getId() );
-		}
-		
 		return availableProc;
 	}
 
@@ -93,7 +86,7 @@ public class BankersAlgorithm {
 			for ( ; k<resSize && !jobQ.get(temp).isAllocated(choice); k++){
 				need = jobQ.get(temp).getNeed();
 				
-				System.out.println("NOW: "+need.get(k) + " avail: " +available.get(k) );
+//				System.out.println("NOW: "+need.get(k) + " avail: " +available.get(k) );
 				if (need.get(k) > available.get(k)) {
 					break;
 				}
@@ -134,7 +127,7 @@ public class BankersAlgorithm {
 			available.set(j, temp+max.get(j));
 		
 			if (temp!=available.get(j))
-				System.out.println("j="+available.get(j));
+//				System.out.println("j="+available.get(j));
 				chart.showAvailable(j, Integer.toString(available.get(j)));
 			System.out.println("");
 		}
@@ -148,19 +141,20 @@ public class BankersAlgorithm {
 		ArrayList<Integer> need;
 		int temp;
 		need = process.getNeed();
-		
-		//System.out.print("Used proc: "+ jobQ.get(i).getId() + "|| "+id+"Available now: ");
-		//System.out.println("[used] Available now: ");
-		for (int j=1; j<resSize; j++){
+				for (int j=1; j<resSize; j++){
 			temp= available.get(j);
 			available.set(j, temp - need.get(j));
 			//System.out.print(available.get(j));
 		
 			if (temp!=available.get(j)){
-				System.out.println("j="+available.get(j));
+//				System.out.println("j="+available.get(j));
 				chart.showAvailable(j, Integer.toString(available.get(j)));
 			}
 		}
 		//System.out.println("");
+	}
+
+	public void setAvailable(ArrayList<Integer> available){
+		this.available = available;
 	}
 }

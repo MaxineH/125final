@@ -15,9 +15,6 @@ public class SafeState {
 		this.avail = new ArrayList<Integer>(avail);
 		
 		System.out.println("Available @ safeState: "  );
-		for (int i=0; i<avail.size(); i++){
-			System.out.print(avail.get(i) + " ");
-		}
 	}
 
 	public boolean hasDeadlock( ArrayList<Process> procList , int resSize){
@@ -27,8 +24,6 @@ public class SafeState {
 		ArrayList<Integer> need;
 		ArrayList<Integer> tempAvailable = new ArrayList<>(avail);
 		Queue<Process> q = new LinkedList<>(procList);
-		
-		System.out.println("Checking state...");
 		
 		for (int j=1, check=0; !q.isEmpty() && check<=maxIteration; j=1, check++){
 					
