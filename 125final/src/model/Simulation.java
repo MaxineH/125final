@@ -17,6 +17,7 @@ public class Simulation extends Thread {
 	private int simCount;
 	private int delay=1000;
 	private boolean running=true;
+	private int maxIteration=0;
 	
 	private SchedulingAlgo[] cpu;
 	private BankersAlgorithm[] banker;
@@ -51,6 +52,7 @@ public class Simulation extends Thread {
 			deadlock.pushSafeState(available);
 			available=deadlock.getAvailable();
 		}
+		maxIteration = deadlock.getMaxIteration();
 		start();
 	}
 	
@@ -72,7 +74,7 @@ public class Simulation extends Thread {
 		while (running) {
 			if (!isInterrupted()) {
 				for (int i=0; i<simCount; i++) {
-					tempProc=banker[i].getProcess(t);
+					tempProc = banker[i].getProcess(t, maxIteration);
 					
 					if (tempProc.size()>0) {
 						cpu[i].addNewProc(tempProc);
